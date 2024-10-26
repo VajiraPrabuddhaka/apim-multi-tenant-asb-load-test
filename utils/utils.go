@@ -86,8 +86,8 @@ func ReadAsbTopicAndConnectionStringsFromFile(filename string) ([][2]string, err
 	return configs, nil
 }
 
-// readOrgAndDataPlaneIDs reads the org UUIDs and data plane IDs from a file.
-func readOrgAndDataPlaneIDs(filename string) ([][2]string, error) {
+// ReadOrgAndDataPlaneIDs reads the org UUIDs and data plane IDs from a file.
+func ReadOrgAndDataPlaneIDs(filename string) ([][2]string, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file: %v", err)
@@ -114,7 +114,7 @@ func readOrgAndDataPlaneIDs(filename string) ([][2]string, error) {
 
 // CreateEnvironmentsFromFile reads org and data plane IDs and creates environments in parallel.
 func CreateEnvironmentsFromFile(filename, authToken string, maxParallel int) {
-	orgDataPlanePairs, err := readOrgAndDataPlaneIDs(filename)
+	orgDataPlanePairs, err := ReadOrgAndDataPlaneIDs(filename)
 	if err != nil {
 		log.Fatalf("Error reading org and data plane IDs: %v", err)
 	}
@@ -149,4 +149,29 @@ func CreateEnvironmentsFromFile(filename, authToken string, maxParallel int) {
 
 	// Wait for all goroutines to complete.
 	wg.Wait()
+}
+
+// LoadAPIData loads the API data from the given file.
+func LoadAPIData(filename string) ([][]string, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open file: %v", err)
+	}
+	defer file.Close()
+
+	var apiData [][]string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		parts := strings.Split(line, ",")
+		if len(parts) != 4 {
+			return nil, fmt.Errorf("invalid data format in line: %s", line)
+		}
+		apiData = append(apiData, parts)
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("error reading file: %v", err)
+	}
+	return apiData, nil
 }

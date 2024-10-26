@@ -20,7 +20,7 @@ type Message struct {
 // Generates a random subscription name.
 func generateRandomSubscriptionName() string {
 	rand.Seed(time.Now().UnixNano())
-	return fmt.Sprintf("sub-%d", rand.Intn(100000))
+	return fmt.Sprintf("sub-%d", rand.Intn(100000000))
 }
 
 // Creates a subscription for a given topic with a random name.

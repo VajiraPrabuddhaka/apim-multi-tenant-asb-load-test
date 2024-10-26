@@ -9,7 +9,7 @@ import (
 )
 
 // CreateAPI sends the API creation request and returns the API ID.
-func CreateAPI(location, orgID, authToken string) (string, error) {
+func CreateAPI(name, orgID, authToken string) (string, error) {
 	jsonPayload := fmt.Sprintf(`{
 		"name": "%s",
 		"description": "This API is used to connect to the TestAPI service",
@@ -50,7 +50,7 @@ func CreateAPI(location, orgID, authToken string) (string, error) {
 			"apiOwner": "ca0c41b4-5bbd-48c8-b319-cf64d98e85b1",
 			"vendor": "WSO2"
 		}
-	}`, location, location)
+	}`, name, name)
 
 	url := fmt.Sprintf("%s?organizationId=%s&openAPIVersion=%s", apisBasePath, orgID, openAPIVersion)
 
